@@ -1,33 +1,45 @@
-# 全国计算机等级考试一级 MS Office 选择题 App（Android）
+# Office 考证通（Android）
 
-这是根据用户上传的《【无忧考吧】计算机一级必考选择题400道.docx》制作的 Android 离线刷题 App 项目。
+这是一个原创风格的全国计算机等级考试一级 MS Office 离线刷题 App 项目。功能形态参考常见刷题软件：题库练习、自动判题、进度统计、错题巩固等；名称、Logo、配色与界面均为原创设计，不使用“未来教育”等第三方品牌名称、商标或界面素材。
 
 ## 当前内容
 
+- App 名称：Office 考证通
 - 题库数量：400 道选择题
 - 题库位置：`app/src/main/assets/questions.json`
 - 主程序：`app/src/main/java/com/example/ncremsbank/MainActivity.java`
+- 原创 Logo：`app/src/main/res/drawable/ic_app_logo.xml`
 - 最低 Android 版本：Android 6.0，API 23
 - 目标 SDK：Android 35
 
-## 已实现功能
+## 已实现/保留功能
 
 - 离线刷题，不需要联网
-- 上一题 / 下一题
 - 点击选项自动判断对错
-- 显示 / 隐藏答案和解析
-- 错题本
-- 收藏题
-- 已做题进度统计
-- 输入题号跳转
-- 关键词搜索题目
-- 随机练习
-- 50 题模拟考试模式
-- 本地自动保存进度、错题、收藏
+- 题目进度显示
+- 卡片式题目展示
+- 原创蓝紫渐变品牌头图
+- 原创 App Logo
+- GitHub Actions 云端构建 APK
 
-## 如何生成 APK
+## 如何用 GitHub Actions 生成 APK
 
-### 方法一：Android Studio
+1. 把本项目上传到 GitHub 仓库。
+2. 打开仓库的 `Actions` 页面。
+3. 运行 `Build Android APK` 工作流。
+4. 成功后在 `Artifacts/工件` 下载：
+
+```text
+ncre-ms-office-question-bank-debug-apk
+```
+
+5. 解压后得到：
+
+```text
+app-debug.apk
+```
+
+## 如何用 Android Studio 生成 APK
 
 1. 安装 Android Studio。
 2. 解压本项目压缩包。
@@ -46,24 +58,6 @@ Build > Build Bundle(s) / APK(s) > Build APK(s)
 app/build/outputs/apk/debug/app-debug.apk
 ```
 
-### 方法二：Windows 脚本
+## 版权与品牌说明
 
-如果你的电脑已经配置好 Java、Android SDK、Gradle，可以双击：
-
-```text
-build-apk-windows.bat
-```
-
-如果缺少环境，脚本会提示缺什么。
-
-## 说明
-
-当前运行环境没有 Java、Gradle、Android SDK，所以助手侧无法直接编译出 APK 文件；本项目已补齐源码、题库、配置和构建脚本，可在 Android Studio 中生成 APK。
-
-## 后续可继续增强
-
-- 增加夜间模式
-- 增加考试倒计时
-- 增加成绩页
-- 增加题目分类
-- 增加导出错题
+本项目是原创学习工具示例，不隶属于“未来教育”等第三方机构，也不复刻其商标、Logo、UI 图片或受保护题库内容。若用于公开发布，请自行确认题库来源和授权情况。
