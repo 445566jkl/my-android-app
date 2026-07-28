@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -50,7 +51,7 @@ public class MainActivity extends Activity {
         sp = getSharedPreferences("ncre_ms_practice", MODE_PRIVATE);
         loadQuestions();
         loadWrongIds();
-        showHome();
+        showLogin();
     }
 
     private void base() {
@@ -63,10 +64,53 @@ public class MainActivity extends Activity {
         setContentView(scroll);
     }
 
+    private void showLogin() {
+        mode = "login";
+        LinearLayout page = new LinearLayout(this);
+        page.setOrientation(LinearLayout.VERTICAL);
+        page.setGravity(Gravity.CENTER_HORIZONTAL);
+        page.setPadding(dp(24), dp(42), dp(24), dp(26));
+        page.setBackgroundColor(Color.WHITE);
+        setContentView(page);
+
+        TextView logo = text("☁", 70, cyan);
+        logo.setGravity(Gravity.CENTER);
+        page.addView(logo, mp(-1, dp(96), 0, 0, dp(28), 0));
+
+        TextView main = title("海量题库免费刷\n让学习更简单", 28, dark);
+        main.setGravity(Gravity.CENTER);
+        main.setLineSpacing(dp(4), 1.0f);
+        page.addView(main, mp(-1, -2, 0, 0, dp(12), 0));
+
+        TextView appName = text("全国计算机等级考试一级ms刷题助手", 17, muted);
+        appName.setGravity(Gravity.CENTER);
+        appName.setPadding(0, dp(12), 0, 0);
+        page.addView(appName);
+
+        Button enter = button("进入刷题助手");
+        enter.setOnClickListener(v -> showHome());
+        page.addView(enter, mp(-1, dp(54), 0, 0, dp(38), 0));
+
+        TextView spacer = text("", 1, Color.TRANSPARENT);
+        page.addView(spacer, mp(-1, 0, 1, 0, 0, 0));
+
+        TextView brand = text("全国计算机等级考试 · 一级 MS Office", 13, Color.rgb(145, 155, 174));
+        brand.setGravity(Gravity.CENTER);
+        page.addView(brand, mp(-1, -2, 0, 0, dp(16), 0));
+    }
+
     private void showHome() {
         mode = "home";
-        base();
-        root.setPadding(dp(18), dp(22), dp(18), dp(18));
+
+        FrameLayout frame = new FrameLayout(this);
+        frame.setBackgroundColor(bg);
+        ScrollView scroll = new ScrollView(this);
+        root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setPadding(dp(18), dp(22), dp(18), dp(96));
+        scroll.addView(root);
+        frame.addView(scroll);
+        setContentView(frame);
 
         LinearLayout hero = gradientCard(blue, cyan, 28, dp(22));
         TextView badge = text("NCRE 一级 MS Office", 13, Color.WHITE);
@@ -77,27 +121,50 @@ public class MainActivity extends Activity {
         title.setPadding(0, dp(10), 0, 0);
         hero.addView(title);
 
-        TextView sub = text("手机题库 · 随机考试 · 背题记忆 · 错题复习", 14, Color.WHITE);
+        TextView sub = text("选择模式开始练习", 14, Color.WHITE);
         sub.setAlpha(0.95f);
         sub.setPadding(0, dp(12), 0, dp(8));
         hero.addView(sub);
         root.addView(hero, mp(-1, -2, 0, 0, 0, 0, dp(18)));
 
+        root.addView(featureCard("考试模式", "随机抽 20 题，提交后自动评分", "📝", blue, v -> startExam()));
+        root.addView(featureCard("背题模式", "直接显示答案和解析，快速记忆", "📖", cyan, v -> startStudy(false)));
+
+        TextView tip = text("右下角“我的题库”里可以查看题库数量和错题记录。", 13, muted);
+        tip.setPadding(dp(4), dp(10), dp(4), 0);
+        root.addView(tip);
+
+        Button library = button("我的题库");
+        library.setTextSize(15);
+        library.setOnClickListener(v -> showLibrary());
+        FrameLayout.LayoutParams fp = new FrameLayout.LayoutParams(dp(122), dp(52), Gravity.BOTTOM | Gravity.RIGHT);
+        fp.setMargins(0, 0, dp(18), dp(20));
+        frame.addView(library, fp);
+    }
+
+    private void showLibrary() {
+        mode = "library";
+        base();
+        root.setPadding(dp(18), dp(22), dp(18), dp(18));
+
+        LinearLayout hero = gradientCard(purple, blue, 26, dp(20));
+        hero.addView(title("我的题库", 26, Color.WHITE));
+        TextView sub = text("题库管理、错题记录和复习入口", 14, Color.WHITE);
+        sub.setAlpha(0.94f);
+        sub.setPadding(0, dp(10), 0, 0);
+        hero.addView(sub);
+        root.addView(hero, mp(-1, -2, 0, 0, 0, 0, dp(18)));
+
         LinearLayout stat = card(Color.WHITE, 22, dp(16));
-        TextView statTitle = title("我的题库", 18, dark);
-        stat.addView(statTitle);
-        TextView statText = text("题库总数 " + allQuestions.length() + " 题    |    错题记录 " + wrongIds.size() + " 题", 14, muted);
+        stat.addView(title("题库概览", 18, dark));
+        TextView statText = text("题库总数 " + allQuestions.length() + " 题\n错题记录 " + wrongIds.size() + " 题", 15, muted);
         statText.setPadding(0, dp(8), 0, 0);
         stat.addView(statText);
         root.addView(stat, mp(-1, -2, 0, 0, 0, 0, dp(14)));
 
-        root.addView(featureCard("考试模式", "随机抽 20 题，提交后自动评分", "📝", blue, v -> startExam()));
-        root.addView(featureCard("背题模式", "直接显示答案和解析，快速记忆", "📖", cyan, v -> startStudy(false)));
-        root.addView(featureCard("错题记录", "自动保存错题，随时回看复习", "⭐", orange, v -> showWrongList()));
-
-        TextView tip = text("保持原有功能：A/B/C/D 选择、上一题/下一题、20题考试、提交评分、错题自动记录。", 13, muted);
-        tip.setPadding(dp(4), dp(10), dp(4), 0);
-        root.addView(tip);
+        root.addView(featureCard("错题记录", "查看并复习考试中做错的题", "⭐", orange, v -> showWrongList()));
+        root.addView(featureCard("错题复习", "直接进入错题背题模式", "📌", red, v -> startStudy(true)));
+        root.addView(menuButton("返回首页", v -> showHome()));
     }
 
     private void startExam() {
@@ -118,7 +185,7 @@ public class MainActivity extends Activity {
         }
         if (paper.isEmpty()) {
             Toast.makeText(this, onlyWrong ? "还没有错题记录" : "题库为空", Toast.LENGTH_SHORT).show();
-            showHome();
+            if (onlyWrong) showLibrary(); else showHome();
             return;
         }
         index = 0;
@@ -221,6 +288,17 @@ public class MainActivity extends Activity {
         showResult(score, wrongNow);
     }
 
+    @Override
+    public void onBackPressed() {
+        if ("login".equals(mode)) {
+            super.onBackPressed();
+        } else if ("home".equals(mode)) {
+            showLogin();
+        } else {
+            showHome();
+        }
+    }
+
     private void showResult(int score, ArrayList<JSONObject> wrongNow) {
         base();
         LinearLayout result = card(Color.WHITE, 20, dp(18));
@@ -259,7 +337,7 @@ public class MainActivity extends Activity {
     private void showWrongList() {
         if (wrongIds.isEmpty()) {
             Toast.makeText(this, "还没有错题，先去考试模式做一套题吧", Toast.LENGTH_SHORT).show();
-            showHome();
+            showLibrary();
             return;
         }
         startStudy(true);
