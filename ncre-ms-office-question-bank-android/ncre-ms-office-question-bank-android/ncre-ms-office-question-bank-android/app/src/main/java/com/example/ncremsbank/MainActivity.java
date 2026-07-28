@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
-import android.text.TextUtils;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -34,13 +33,9 @@ public class MainActivity extends Activity {
     private SharedPreferences sp;
 
     private LinearLayout root;
-    private final int blue = Color.rgb(45, 117, 255);
-    private final int cyan = Color.rgb(18, 190, 178);
-    private final int orange = Color.rgb(255, 139, 46);
-    private final int purple = Color.rgb(111, 87, 255);
+    private final int blue = Color.rgb(39, 104, 255);
     private final int dark = Color.rgb(28, 40, 72);
-    private final int muted = Color.rgb(103, 116, 142);
-    private final int bg = Color.rgb(244, 247, 253);
+    private final int bg = Color.rgb(245, 247, 252);
     private final int green = Color.rgb(24, 155, 93);
     private final int red = Color.rgb(220, 72, 72);
 
@@ -66,38 +61,21 @@ public class MainActivity extends Activity {
     private void showHome() {
         mode = "home";
         base();
-        root.setPadding(dp(18), dp(22), dp(18), dp(18));
-
-        LinearLayout hero = gradientCard(blue, cyan, 28, dp(22));
-        TextView badge = text("NCRE 一级 MS Office", 13, Color.WHITE);
-        badge.setAlpha(0.92f);
-        hero.addView(badge);
-
-        TextView title = title("全国计算机等级考试\n一级ms刷题助手", 26, Color.WHITE);
-        title.setPadding(0, dp(10), 0, 0);
+        TextView title = title("全国计算机等级考试\n一级MS刷题助手", 25, Color.WHITE);
+        LinearLayout hero = card(blue, 22, dp(18));
         hero.addView(title);
-
-        TextView sub = text("手机题库 · 随机考试 · 背题记忆 · 错题复习", 14, Color.WHITE);
-        sub.setAlpha(0.95f);
-        sub.setPadding(0, dp(12), 0, dp(8));
+        TextView sub = text("考试模式 + 背题模式 + 错题复习", 15, Color.WHITE);
+        sub.setPadding(0, dp(8), 0, 0);
         hero.addView(sub);
-        root.addView(hero, mp(-1, -2, 0, 0, 0, 0, dp(18)));
+        root.addView(hero, mp(-1, -2, 0, 0, 0, dp(16)));
 
-        LinearLayout stat = card(Color.WHITE, 22, dp(16));
-        TextView statTitle = title("我的题库", 18, dark);
-        stat.addView(statTitle);
-        TextView statText = text("题库总数 " + allQuestions.length() + " 题    |    错题记录 " + wrongIds.size() + " 题", 14, muted);
-        statText.setPadding(0, dp(8), 0, 0);
-        stat.addView(statText);
-        root.addView(stat, mp(-1, -2, 0, 0, 0, 0, dp(14)));
+        root.addView(menuButton("考试模式：随机抽 20 题，提交后评分", v -> startExam()));
+        root.addView(menuButton("背题模式：直接显示答案和解析", v -> startStudy(false)));
+        root.addView(menuButton("错题记录：查看并复习做错题", v -> showWrongList()));
 
-        root.addView(featureCard("考试模式", "随机抽 20 题，提交后自动评分", "📝", blue, v -> startExam()));
-        root.addView(featureCard("背题模式", "直接显示答案和解析，快速记忆", "📖", cyan, v -> startStudy(false)));
-        root.addView(featureCard("错题记录", "自动保存错题，随时回看复习", "⭐", orange, v -> showWrongList()));
-
-        TextView tip = text("保持原有功能：A/B/C/D 选择、上一题/下一题、20题考试、提交评分、错题自动记录。", 13, muted);
-        tip.setPadding(dp(4), dp(10), dp(4), 0);
-        root.addView(tip);
+        TextView info = text("题库总数：" + allQuestions.length() + " 题\n错题记录：" + wrongIds.size() + " 题", 15, dark);
+        info.setPadding(dp(6), dp(12), dp(6), 0);
+        root.addView(info);
     }
 
     private void startExam() {
@@ -344,38 +322,6 @@ public class MainActivity extends Activity {
         return v;
     }
 
-    private LinearLayout featureCard(String name, String desc, String icon, int accent, View.OnClickListener l) {
-        LinearLayout row = new LinearLayout(this);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setPadding(dp(16), dp(15), dp(14), dp(15));
-        row.setBackground(roundStroke(Color.WHITE, Color.rgb(230, 235, 247), 22));
-        row.setOnClickListener(l);
-        row.setClickable(true);
-
-        TextView iconView = text(icon, 25, Color.WHITE);
-        iconView.setGravity(Gravity.CENTER);
-        iconView.setBackground(round(accent, 18));
-        row.addView(iconView, mp(dp(52), dp(52), 0, 0, dp(14), 0, 0));
-
-        LinearLayout words = new LinearLayout(this);
-        words.setOrientation(LinearLayout.VERTICAL);
-        TextView t = title(name, 18, dark);
-        TextView d = text(desc, 14, muted);
-        d.setPadding(0, dp(5), 0, 0);
-        d.setSingleLine(true);
-        d.setEllipsize(TextUtils.TruncateAt.END);
-        words.addView(t);
-        words.addView(d);
-        row.addView(words, mp(0, -2, 1, 0, 0, 0, 0));
-
-        TextView arrow = text("›", 28, accent);
-        arrow.setGravity(Gravity.CENTER);
-        row.addView(arrow, mp(dp(26), dp(52), 0, 0, 0, 0, 0));
-        row.setLayoutParams(mp(-1, -2, 0, 0, 0, 0, dp(12)));
-        return row;
-    }
-
     private Button menuButton(String s, View.OnClickListener l) {
         Button b = button(s);
         b.setGravity(Gravity.CENTER_VERTICAL);
@@ -418,16 +364,6 @@ public class MainActivity extends Activity {
         return g;
     }
 
-    private LinearLayout gradientCard(int startColor, int endColor, int radius, int padding) {
-        LinearLayout l = new LinearLayout(this);
-        l.setOrientation(LinearLayout.VERTICAL);
-        l.setPadding(padding, padding, padding, padding);
-        GradientDrawable g = new GradientDrawable(GradientDrawable.Orientation.TL_BR, new int[]{startColor, endColor});
-        g.setCornerRadius(dp(radius));
-        l.setBackground(g);
-        return l;
-    }
-
     private GradientDrawable roundStroke(int color, int strokeColor, int radiusDp) {
         GradientDrawable g = round(color, radiusDp);
         g.setStroke(dp(1), strokeColor);
@@ -437,12 +373,6 @@ public class MainActivity extends Activity {
     private LinearLayout.LayoutParams mp(int w, int h, int weight, int l, int t, int r) {
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(w, h, weight);
         p.setMargins(l, t, r, 0);
-        return p;
-    }
-
-    private LinearLayout.LayoutParams mp(int w, int h, int weight, int l, int t, int r, int b) {
-        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(w, h, weight);
-        p.setMargins(l, t, r, b);
         return p;
     }
 
